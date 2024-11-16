@@ -27,41 +27,20 @@ function processImage(imagePath, maskPath) {
         const height = image.info.height;
         const channels = image.info.channels;
         const filled_image = Object.assign({}, image);
-        for (let r = 0; r < image.info.width; r++) {
-            for (let c = 0; c < image.info.height; c++) {
+        // Apply the mask!!
+        let holes = [];
+        for (let r = 0; r < width; r++) {
+            for (let c = 0; c < height; c++) {
                 const index = (r * width) + c;
                 const maskValue = mask.data[index];
                 if (maskValue < 0.5) {
                     filled_image.data[index] = 0;
+                    holes.push([(r * width), c]);
                 }
             }
         }
-        // let pixels = [];
-        // for (let r=0; r < image.info.width; r++) {
-        //     let row = []
-        //     for (let c=0; c < image.info.height; c++) {
-        //         const maskValue = mask.data[r+c]/255.0;
-        //         if (maskValue < 0.5) {
-        //             row.push(0.0);
-        //         } else {
-        //             row.push(image.data[r+c]/255.0);
-        //         }
-        //     }
-        //     pixels.push(row)
-        // }
-        // const data = buffer.data;
-        // const info = buffer.info;
-        // console.log(data.length);
-        // console.log(info);
-        // let pixels = [];
-        // for (let r=0; r < info.width; r++) {
-        //     let row = []
-        //     for (let c=0; c < info.height; c++) {
-        //         row.push(data[r+c]/255.0);
-        //     }
-        //     pixels.push(row)
-        // }
-        // console.log(pixels);
+        console.log(holes.length);
+        // Write out the image
         yield sharp(filled_image.data, { raw: { width, height, channels } })
             .toFormat('png')
             .toFile('.\\resources\\nature_filled.png');
