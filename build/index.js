@@ -8,7 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const sharp = require('sharp');
+// THINGS TO DO
+// Split into modules
+// Make it type safe
+// CLI
+// Splits..
+//      Object Pixel - row, col, index, value
+//      class WeightingMechanism - u,v
+//      class HoleFiller - imagepath, maskpath, connectivity
 // Reads the image, converts it to grayscale.
 function convert_to_grayscale(path) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -80,6 +89,8 @@ function processImage(imagePath, maskPath) {
         for (let boundary of boundaries) {
             filled_image.data[boundary[3]] = 0;
         }
+        const pixel = { row: 3, column: 3, index: 148, value: 0.765 };
+        console.log(pixel);
         // Write out the image
         yield sharp(filled_image.data, { raw: { width, height, channels } })
             .toFormat('png')

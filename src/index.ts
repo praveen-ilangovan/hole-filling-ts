@@ -1,5 +1,18 @@
 const sharp = require('sharp')
 
+// Local imports
+import { Pixel } from './pixel';
+
+// THINGS TO DO
+// Split into modules
+// Make it type safe
+// CLI
+
+// Splits..
+//      Interface Pixel - row, col, index, value
+//      class WeightingMechanism - u,v
+//      class HoleFiller - imagepath, maskpath, connectivity
+
 // Reads the image, converts it to grayscale.
 async function convert_to_grayscale(path: string) {
     const buffer = await sharp(path)
@@ -78,6 +91,9 @@ async function processImage(imagePath: string, maskPath: string) {
     for (let boundary of boundaries) {
         filled_image.data[boundary[3]] = 0;
     }
+
+    const pixel: Pixel = {row:3, column:3, index: 148, value: 0.765};
+    console.log(pixel);
 
     // Write out the image
     await sharp(filled_image.data, { raw: { width, height, channels } })
