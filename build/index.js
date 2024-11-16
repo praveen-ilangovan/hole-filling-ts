@@ -16,12 +16,13 @@ function convert_to_grayscale(path) {
             .grayscale()
             .raw()
             .toBuffer({ resolveWithObject: true });
-        // for (let i=0; i < buffer.info.size; i++) {
-        //     buffer.data[i] /= 255.0;
-        //     console.log(buffer.data[i]);
-        // }
         return buffer;
     });
+}
+function get_weight(x0, y0, x1, y1) {
+    const dist = Math.hypot(x1 - x0, y1 - y0);
+    const denominator = Math.pow(dist, 3) + 0.01;
+    return 1 / denominator;
 }
 function processImage(imagePath, maskPath) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -31,9 +32,6 @@ function processImage(imagePath, maskPath) {
         const height = image.info.height;
         const channels = image.info.channels;
         const filled_image = Object.assign({}, image);
-        // for (let i=0; i < filled_image.info.size; i++) {
-        //     console.log(filled_image.data[i]);
-        // }
         // Apply the mask!!
         let holes = [];
         for (let r = 0; r < width; r++) {
@@ -41,8 +39,7 @@ function processImage(imagePath, maskPath) {
                 const index = (r * width) + c;
                 const maskValue = mask.data[index];
                 if (maskValue < 0.5) {
-                    // filled_image.data[index] = -1;
-                    filled_image.data[index] = 200;
+                    filled_image.data[index] = 200; // debug
                     holes.push([r, c, index]);
                 }
             }
@@ -62,57 +59,33 @@ function processImage(imagePath, maskPath) {
                     continue;
                 }
                 if (mask.data[(nr * width) + nc] >= 0.5) {
-                    filled_image.data[(nr * width) + nc] = 0;
-                    boundaries.add([nr, nc, filled_image.data[(nr * width) + nc]]);
+                    // filled_image.data[ (nr*width) + nc ] = 0; //debug
+                    boundaries.add([nr, nc, filled_image.data[(nr * width) + nc] / 255, (nr * width) + nc]);
                 }
             }
         }
         console.log(boundaries.size);
-        // // Write out the image
-        // for (let i=0; i < filled_image.data.length; i++) {
-        //     if (filled_image.data[i] == -1) {
-        //         console.log(i)
-        //     }
-        // }
+        // Calculate the hole color
+        for (let hole of holes) {
+            let numerator = 0.0;
+            let denominator = 0.0;
+            for (let boundary of boundaries) {
+                const weight = get_weight(hole[0], hole[1], boundary[0], boundary[1]);
+                numerator += weight * boundary[2];
+                denominator += weight;
+            }
+            filled_image.data[hole[2]] = (numerator / denominator) * 255;
+        }
+        // debug
+        for (let boundary of boundaries) {
+            filled_image.data[boundary[3]] = 0;
+        }
+        // Write out the image
         yield sharp(filled_image.data, { raw: { width, height, channels } })
             .toFormat('png')
             .toFile('.\\resources\\nature_filled.png');
     });
 }
-function test() {
-    let arr = [[1, 1, 1, 1, 1],
-        [1, 1, 0, 1, 1],
-        [1, 1, 0, 1, 1],
-        [1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1]];
-    let holes = [];
-    for (let i = 0; i < arr.length; i++) {
-        for (let j = 0; j < arr[i].length; j++) {
-            if (arr[i][j] === 0) {
-                holes.push([i, j]);
-            }
-        }
-    }
-    console.log(holes);
-    let boundaries = new Set();
-    const neighbours = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-    for (let hole of holes) {
-        for (let neighbour of neighbours) {
-            const nr = hole[0] + neighbour[0];
-            if (nr < 0 || nr >= arr.length) {
-                continue;
-            }
-            const nc = hole[1] + neighbour[1];
-            if (nc < 0 || nc >= arr[0].length) {
-                continue;
-            }
-            if (arr[nr][nc] != 0) {
-                boundaries.add([nr, nc, arr[nr][nc]]);
-            }
-        }
-    }
-    console.log(boundaries);
-}
 console.log("Hello World!");
-processImage(".\\resources\\nature.png", ".\\resources\\nature_mask.png");
-// test();
+// processImage(".\\resources\\nature.png", ".\\resources\\nature_mask.png");
+processImage(".\\resources\\Lenna.png", ".\\resources\\Mask.png");
