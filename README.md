@@ -27,11 +27,12 @@ where
 
 ## Running locally
 
-### Installation
-
 ### Requirements
+
  - [NodeJs - v22.11.0](https://nodejs.org/en)
  - [npm - v10.9.0](https://www.npmjs.com/)
+
+### Installation
 
 ```sh
 cd hole-filling-s
