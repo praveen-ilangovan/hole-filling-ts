@@ -2,9 +2,6 @@ import { Program } from './cli';
 import { HoleFiller } from './holeFiller';
 import { DefaultWeightingMechanism } from './weighting';
 
-// THINGS TO DO
-// Make it type safe
-
 async function main() {
     const options = Program.opts();    
     const dwm = new DefaultWeightingMechanism(options.weight_z, options.weight_e);
