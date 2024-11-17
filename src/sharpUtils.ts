@@ -8,7 +8,7 @@ export interface Image {
     path: string
 }
 
-export async function convert_to_grayscale(path: string): Promise<Image> {
+export async function convertToGrayscale(path: string): Promise<Image> {
     const buffer = await sharp(path)
                             .grayscale()
                             .raw()
@@ -24,4 +24,13 @@ export async function convert_to_grayscale(path: string): Promise<Image> {
     return image;
 }
 
-// save image (data: object, width: number, height: number, channels: number, format: string, dst: string)
+export async function saveImage(image: Image, filepath: string = ".\\resources\\filledImaage.png") {
+    const width = image.width
+    const height = image.height
+    const channels = image.channels
+    const ext = "png";
+
+    await sharp(image.data, { raw: { width, height, channels } })
+            .toFormat(ext)
+            .toFile(filepath);
+}

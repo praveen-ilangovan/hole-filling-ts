@@ -1,9 +1,8 @@
 const sharp = require('sharp')
 
 // Local imports
-import { Pixel } from './pixel';
-import { convert_to_grayscale, Image } from './sharpUtils';
 import { HoleFiller } from './holeFiller';
+import { DefaultWeightingMechanism } from './weighting';
 
 // THINGS TO DO
 // Split into modules
@@ -104,19 +103,20 @@ function get_weight(x0: number, y0: number, x1: number, y1: number) {
 //             .toFile('.\\resources\\nature_filled.png');
 // }
 
-async function processImage02(imagePath: string, maskPath: string) {
-    const image = await convert_to_grayscale(imagePath);
-    const mask = await convert_to_grayscale(maskPath);
-    const width = image.width;
-    const height = image.height;
-    const channels = image.channels;
+// async function processImage02(imagePath: string, maskPath: string) {
+//     const image = await convert_to_grayscale(imagePath);
+//     const mask = await convert_to_grayscale(maskPath);
+//     const width = image.width;
+//     const height = image.height;
+//     const channels = image.channels;
 
-    console.log(image);
-}
+//     console.log(image);
+// }
 
 console.log("Hello World!");
 // processImage(".\\resources\\nature.png", ".\\resources\\nature_mask.png");
 // processImage02(".\\resources\\Lenna.png", ".\\resources\\Mask.png");
 
-const hf = new HoleFiller(".\\resources\\nature.png", ".\\resources\\nature_mask.png");
+const dwm = new DefaultWeightingMechanism(3, 0.01);
+const hf = new HoleFiller(".\\resources\\Lenna.png", ".\\resources\\Mask.png", dwm);
 hf.fill();

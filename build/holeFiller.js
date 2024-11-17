@@ -12,12 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HoleFiller = void 0;
 const sharpUtils_1 = require("./sharpUtils");
 class HoleFiller {
-    constructor(imagePath, maskPath, connectivity = 4) {
+    constructor(imagePath, maskPath, weightingMechanism, connectivity = 4) {
         this.holes = new Set();
         this.boundaries = new Set();
         this.neighbours = [];
         this.imagePath = imagePath;
         this.maskPath = maskPath;
+        this.weightingMechanism = weightingMechanism;
         this.connectivity = connectivity;
         this.neighbours = [[-1, 0], [1, 0], [0, -1], [0, 1]];
         if (this.connectivity == 8) {
@@ -29,13 +30,14 @@ class HoleFiller {
     }
     fill() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.image = yield (0, sharpUtils_1.convert_to_grayscale)(this.imagePath);
-            this.mask = yield (0, sharpUtils_1.convert_to_grayscale)(this.maskPath);
+            this.image = yield (0, sharpUtils_1.convertToGrayscale)(this.imagePath);
+            this.mask = yield (0, sharpUtils_1.convertToGrayscale)(this.maskPath);
             if (!this.image && !this.mask) {
                 throw new Error('Failed to read the image and mask');
             }
             this.findHolesAndBoundaries();
             this.setHoleColor();
+            (0, sharpUtils_1.saveImage)(this.image);
             const filledImagePath = "";
             return filledImagePath;
         });
@@ -55,8 +57,6 @@ class HoleFiller {
                 }
             }
         }
-        console.log(this.holes.size);
-        console.log(this.boundaries.size);
     }
     findBoundaries(hole) {
         if (!this.mask || !this.image) {
@@ -94,11 +94,15 @@ class HoleFiller {
         let numerator = 0.0;
         let denominator = 0.0;
         for (const boundary of this.boundaries) {
-            const weight = 5;
+            const weight = this.weightingMechanism.getWeight(hole, boundary);
             numerator += weight * boundary.value;
             denominator += weight;
         }
         return numerator / denominator;
+    }
+    saveImage() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
     }
 }
 exports.HoleFiller = HoleFiller;

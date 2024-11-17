@@ -1,10 +1,12 @@
 
-import { Image, convert_to_grayscale } from './sharpUtils';
+import { Image, convertToGrayscale, saveImage } from './sharpUtils';
 import { Pixel } from './pixel';
+import { AbstractWeightingMechanism } from './weighting';
 
 export class HoleFiller {
     private imagePath: string
     private maskPath: string
+    private weightingMechanism: AbstractWeightingMechanism
     private connectivity: number
 
     private image: Image | undefined
@@ -13,9 +15,13 @@ export class HoleFiller {
     private boundaries: Set<Pixel> = new Set();
     private neighbours: number[][] = [];
 
-    public constructor(imagePath: string, maskPath: string, connectivity: number = 4) {
+    public constructor(imagePath: string,
+                       maskPath: string,
+                       weightingMechanism: AbstractWeightingMechanism,
+                       connectivity: number = 4) {
         this.imagePath = imagePath;
         this.maskPath = maskPath;
+        this.weightingMechanism = weightingMechanism;
         this.connectivity = connectivity;
 
         this.neighbours = [[-1,0], [1,0], [0,-1], [0,1]];
@@ -28,8 +34,8 @@ export class HoleFiller {
     }
 
     public async fill(): Promise<string> {
-        this.image = await convert_to_grayscale(this.imagePath);
-        this.mask = await convert_to_grayscale(this.maskPath);
+        this.image = await convertToGrayscale(this.imagePath);
+        this.mask = await convertToGrayscale(this.maskPath);
 
         if (!this.image && !this.mask) {
             throw new Error('Failed to read the image and mask');
@@ -37,6 +43,7 @@ export class HoleFiller {
 
         this.findHolesAndBoundaries();
         this.setHoleColor();
+        saveImage(this.image);
 
         const filledImagePath: string = "";
         return filledImagePath;
@@ -58,10 +65,6 @@ export class HoleFiller {
                 }
             }
         }
-
-        console.log(this.holes.size);
-        console.log(this.boundaries.size);
-
     }
 
     private findBoundaries(hole: Pixel): void {
@@ -107,7 +110,7 @@ export class HoleFiller {
         let denominator = 0.0;
 
         for (const boundary of this.boundaries) {
-            const weight = 5;
+            const weight = this.weightingMechanism.getWeight(hole, boundary);
             numerator += weight * boundary.value;
             denominator += weight;
         }

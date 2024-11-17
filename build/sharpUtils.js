@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.convert_to_grayscale = convert_to_grayscale;
+exports.convertToGrayscale = convertToGrayscale;
+exports.saveImage = saveImage;
 const sharp = require('sharp');
-function convert_to_grayscale(path) {
+function convertToGrayscale(path) {
     return __awaiter(this, void 0, void 0, function* () {
         const buffer = yield sharp(path)
             .grayscale()
@@ -26,4 +27,14 @@ function convert_to_grayscale(path) {
         return image;
     });
 }
-// save image (data: object, width: number, height: number, channels: number, format: string, dst: string)
+function saveImage(image_1) {
+    return __awaiter(this, arguments, void 0, function* (image, filepath = ".\\resources\\filledImaage.png") {
+        const width = image.width;
+        const height = image.height;
+        const channels = image.channels;
+        const ext = "png";
+        yield sharp(image.data, { raw: { width, height, channels } })
+            .toFormat(ext)
+            .toFile(filepath);
+    });
+}

@@ -1,17 +1,9 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const sharp = require('sharp');
-const sharpUtils_1 = require("./sharpUtils");
+// Local imports
 const holeFiller_1 = require("./holeFiller");
+const weighting_1 = require("./weighting");
 // THINGS TO DO
 // Split into modules
 // Make it type safe
@@ -96,18 +88,17 @@ function get_weight(x0, y0, x1, y1) {
 //             .toFormat('png')
 //             .toFile('.\\resources\\nature_filled.png');
 // }
-function processImage02(imagePath, maskPath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const image = yield (0, sharpUtils_1.convert_to_grayscale)(imagePath);
-        const mask = yield (0, sharpUtils_1.convert_to_grayscale)(maskPath);
-        const width = image.width;
-        const height = image.height;
-        const channels = image.channels;
-        console.log(image);
-    });
-}
+// async function processImage02(imagePath: string, maskPath: string) {
+//     const image = await convert_to_grayscale(imagePath);
+//     const mask = await convert_to_grayscale(maskPath);
+//     const width = image.width;
+//     const height = image.height;
+//     const channels = image.channels;
+//     console.log(image);
+// }
 console.log("Hello World!");
 // processImage(".\\resources\\nature.png", ".\\resources\\nature_mask.png");
 // processImage02(".\\resources\\Lenna.png", ".\\resources\\Mask.png");
-const hf = new holeFiller_1.HoleFiller(".\\resources\\nature.png", ".\\resources\\nature_mask.png");
+const dwm = new weighting_1.DefaultWeightingMechanism(3, 0.01);
+const hf = new holeFiller_1.HoleFiller(".\\resources\\Lenna.png", ".\\resources\\Mask.png", dwm);
 hf.fill();
