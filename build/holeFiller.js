@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HoleFiller = void 0;
+const path = require('path');
 const sharpUtils_1 = require("./sharpUtils");
 class HoleFiller {
     constructor(imagePath, maskPath, weightingMechanism, connectivity = 4) {
@@ -35,10 +36,12 @@ class HoleFiller {
             if (!this.image && !this.mask) {
                 throw new Error('Failed to read the image and mask');
             }
+            const dirPath = path.dirname(this.image.path);
+            const ext = path.extname(this.image.path);
+            const filledImagePath = path.join(dirPath, 'filledImage' + ext);
             this.findHolesAndBoundaries();
             this.setHoleColor();
-            (0, sharpUtils_1.saveImage)(this.image);
-            const filledImagePath = "";
+            (0, sharpUtils_1.saveImage)(this.image, filledImagePath);
             return filledImagePath;
         });
     }
@@ -99,10 +102,6 @@ class HoleFiller {
             denominator += weight;
         }
         return numerator / denominator;
-    }
-    saveImage() {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
     }
 }
 exports.HoleFiller = HoleFiller;

@@ -1,3 +1,4 @@
+const path = require('path');
 
 import { Image, convertToGrayscale, saveImage } from './sharpUtils';
 import { Pixel } from './pixel';
@@ -41,11 +42,14 @@ export class HoleFiller {
             throw new Error('Failed to read the image and mask');
         }
 
+        const dirPath = path.dirname(this.image.path);
+        const ext = path.extname(this.image.path);
+        const filledImagePath = path.join(dirPath, 'filledImage' + ext);
+
         this.findHolesAndBoundaries();
         this.setHoleColor();
-        saveImage(this.image);
+        saveImage(this.image, filledImagePath);
 
-        const filledImagePath: string = "";
         return filledImagePath;
     }
 

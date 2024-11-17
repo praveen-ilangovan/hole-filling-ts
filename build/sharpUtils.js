@@ -27,12 +27,12 @@ function convertToGrayscale(path) {
         return image;
     });
 }
-function saveImage(image_1) {
-    return __awaiter(this, arguments, void 0, function* (image, filepath = ".\\resources\\filledImaage.png") {
+function saveImage(image, filepath) {
+    return __awaiter(this, void 0, void 0, function* () {
         const width = image.width;
         const height = image.height;
         const channels = image.channels;
-        const ext = "png";
+        const ext = filepath.split('.').pop();
         yield sharp(image.data, { raw: { width, height, channels } })
             .toFormat(ext)
             .toFile(filepath);

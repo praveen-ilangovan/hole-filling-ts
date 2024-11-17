@@ -24,11 +24,11 @@ export async function convertToGrayscale(path: string): Promise<Image> {
     return image;
 }
 
-export async function saveImage(image: Image, filepath: string = ".\\resources\\filledImaage.png") {
+export async function saveImage(image: Image, filepath: string) {
     const width = image.width
     const height = image.height
     const channels = image.channels
-    const ext = "png";
+    const ext = filepath.split('.').pop();
 
     await sharp(image.data, { raw: { width, height, channels } })
             .toFormat(ext)
