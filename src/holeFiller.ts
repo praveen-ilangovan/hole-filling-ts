@@ -61,6 +61,10 @@ export class HoleFiller {
             throw new Error('Failed to read the image and mask');
         }
 
+        if (this.image.data.length != this.mask.data.length) {
+            throw new Error('ResolutionMisMatch: Image and Mask should be of same resolution.');
+        }
+
         const dirPath = path.dirname(this.image.path);
         const ext = path.extname(this.image.path);
         const filename = 'filledImage_' + Date.now() + ext

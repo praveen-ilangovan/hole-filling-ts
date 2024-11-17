@@ -1,4 +1,9 @@
-const sharp = require('sharp')
+
+const sharp = require('sharp');
+const fs = require('fs');
+
+import { Stats } from "fs";
+
 
 /**
  * Represents an image with its data and metadata.
@@ -26,6 +31,14 @@ export interface Image {
  * @throws Will throw an error if the image processing fails.
  */
 export async function convertToGrayscale(path: string): Promise<Image> {
+    /** Check if the file exists before reading it */
+    fs.stat(path, (err: NodeJS.ErrnoException, stats: Stats) => {
+        if (err) {
+            throw new Error(`FileNotFound: '${path}'`)
+        }
+      }
+    );
+
     const buffer = await sharp(path)
                             .grayscale()
                             .raw()

@@ -5,13 +5,6 @@ import { Program } from './cli';
 import { HoleFiller } from './holeFiller';
 import { DefaultWeightingMechanism } from './weighting';
 
-/**
- * 
- * TODO: Exception Handling
- * TODO: Dockerfile
- * TODO: Linter
- */
-
 async function main() {
 
     /**

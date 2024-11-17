@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.convertToGrayscale = convertToGrayscale;
 exports.saveImage = saveImage;
 const sharp = require('sharp');
+const fs = require('fs');
 /**
  * Converts an image to grayscale and returns an Image object with the processed data.
  *
@@ -21,6 +22,12 @@ const sharp = require('sharp');
  */
 function convertToGrayscale(path) {
     return __awaiter(this, void 0, void 0, function* () {
+        /** Check if the file exists before reading it */
+        fs.stat(path, (err, stats) => {
+            if (err) {
+                throw new Error(`FileNotFound: '${path}'`);
+            }
+        });
         const buffer = yield sharp(path)
             .grayscale()
             .raw()
