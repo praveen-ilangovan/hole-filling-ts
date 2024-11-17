@@ -6,13 +6,14 @@ import { DefaultWeightingMechanism } from './weighting';
 // Make it type safe
 
 async function main() {
-    const options = Program.opts();
-    console.log(options);
-    
-    // const dwm = new DefaultWeightingMechanism(3, 0.01);
-    // const hf = new HoleFiller(".\\resources\\Lenna.png", ".\\resources\\Mask.png", dwm);
-    // const savedImage = await hf.fill();
-    // console.log('Filled image saved at: ' + savedImage);
+    const options = Program.opts();    
+    const dwm = new DefaultWeightingMechanism(options.weight_z, options.weight_e);
+    const hf = new HoleFiller(options.imagePath,
+                              options.maskPath,
+                              dwm,
+                              Number.parseInt(options.connectivity));
+    const savedImage = await hf.fill();
+    console.log('Filled image saved at: ' + savedImage);
 }
 
 main();

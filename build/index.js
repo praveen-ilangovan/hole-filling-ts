@@ -10,17 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const cli_1 = require("./cli");
+const holeFiller_1 = require("./holeFiller");
+const weighting_1 = require("./weighting");
 // THINGS TO DO
 // Make it type safe
-// CLI
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const options = cli_1.Program.opts();
         console.log(options);
-        // const dwm = new DefaultWeightingMechanism(3, 0.01);
-        // const hf = new HoleFiller(".\\resources\\Lenna.png", ".\\resources\\Mask.png", dwm);
-        // const savedImage = await hf.fill();
-        // console.log('Filled image saved at: ' + savedImage);
+        const dwm = new weighting_1.DefaultWeightingMechanism(options.weight_z, options.weight_e);
+        const hf = new holeFiller_1.HoleFiller(options.imagePath, options.maskPath, dwm, Number.parseInt(options.connectivity));
+        const savedImage = yield hf.fill();
+        console.log('Filled image saved at: ' + savedImage);
     });
 }
 main();
