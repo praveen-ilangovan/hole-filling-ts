@@ -35,7 +35,7 @@ where
 ### Installation
 
 ```sh
-cd hole-filling-s
+cd hole-filling-ts
 npm shell
 ```
 
