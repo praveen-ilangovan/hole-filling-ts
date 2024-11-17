@@ -38,7 +38,8 @@ class HoleFiller {
             }
             const dirPath = path.dirname(this.image.path);
             const ext = path.extname(this.image.path);
-            const filledImagePath = path.join(dirPath, 'filledImage' + ext);
+            const filename = 'filledImage_' + Date.now() + ext;
+            const filledImagePath = path.join(dirPath, filename);
             this.findHolesAndBoundaries();
             this.setHoleColor();
             (0, sharpUtils_1.saveImage)(this.image, filledImagePath);
