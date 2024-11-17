@@ -9,14 +9,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Main entry point for the image processing application.
+ */
 const cli_1 = require("./cli");
 const holeFiller_1 = require("./holeFiller");
 const weighting_1 = require("./weighting");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
+        /**
+         * Parse command line arguments and retrieve input options.
+         */
         const options = cli_1.Program.opts();
+        /**
+         * Create an instance of the weighting mechanism using the provided options.
+         *
+         * @type {DefaultWeightingMechanism}
+         */
         const dwm = new weighting_1.DefaultWeightingMechanism(options.weight_z, options.weight_e);
+        /**
+         * Create a new instance of the HoleFiller class.
+         *
+         * @type {HoleFiller}
+         */
         const hf = new holeFiller_1.HoleFiller(options.imagePath, options.maskPath, dwm, Number.parseInt(options.connectivity));
+        /**
+         * Execute the fill algorithm and save the output.
+         *
+         * @type {string} filledImagePath - The path to the filled image.
+         */
         const savedImage = yield hf.fill();
         console.log('Filled image saved at: ' + savedImage);
     });

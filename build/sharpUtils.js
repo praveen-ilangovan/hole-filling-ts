@@ -12,6 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.convertToGrayscale = convertToGrayscale;
 exports.saveImage = saveImage;
 const sharp = require('sharp');
+/**
+ * Converts an image to grayscale and returns an Image object with the processed data.
+ *
+ * @param {string} path - The file path to the input image.
+ * @returns {Promise<Image>} A promise that resolves to an Image object containing the grayscale image data and metadata.
+ * @throws Will throw an error if the image processing fails.
+ */
 function convertToGrayscale(path) {
     return __awaiter(this, void 0, void 0, function* () {
         const buffer = yield sharp(path)
@@ -27,6 +34,14 @@ function convertToGrayscale(path) {
         return image;
     });
 }
+/**
+ * Saves an Image object to a specified file path.
+ *
+ * @param {Image} image - The Image object to save.
+ * @param {string} filepath - The file path where the image should be saved, including the extension.
+ * @returns {Promise<void>} A promise that resolves when the image has been saved.
+ * @throws Will throw an error if the image saving fails.
+ */
 function saveImage(image, filepath) {
     return __awaiter(this, void 0, void 0, function* () {
         const width = image.width;

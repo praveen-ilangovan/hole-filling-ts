@@ -4,6 +4,11 @@ import { Image, convertToGrayscale, saveImage } from './sharpUtils';
 import { Pixel } from './pixel';
 import { AbstractWeightingMechanism } from './weighting';
 
+/**
+ * Class that fills holes in an image using a mask and a specified weighting mechanism.
+ *
+ * @class HoleFiller
+ */
 export class HoleFiller {
     private imagePath: string
     private maskPath: string
@@ -16,6 +21,14 @@ export class HoleFiller {
     private boundaries: Set<Pixel> = new Set();
     private neighbours: number[][] = [];
 
+    /**
+     * Constructs an instance of HoleFiller.
+     *
+     * @param {string} imagePath - The file path to the image.
+     * @param {string} maskPath - The file path to the mask.
+     * @param {AbstractWeightingMechanism} weightingMechanism - The weighting mechanism used to calculate weights between pixels.
+     * @param {number} [connectivity=4] - The connectivity type (4 or 8).
+     */
     public constructor(imagePath: string,
                        maskPath: string,
                        weightingMechanism: AbstractWeightingMechanism,
@@ -34,6 +47,12 @@ export class HoleFiller {
         }
     }
 
+    /**
+     * Fills the holes in the image and saves the result to a new file.
+     *
+     * @returns {Promise<string>} The file path of the filled image.
+     * @throws Will throw an error if the image or mask cannot be read.
+     */
     public async fill(): Promise<string> {
         this.image = await convertToGrayscale(this.imagePath);
         this.mask = await convertToGrayscale(this.maskPath);
@@ -54,6 +73,11 @@ export class HoleFiller {
         return filledImagePath;
     }
 
+    /**
+     * Finds holes and boundary pixels in the image using the mask.
+     *
+     * @private
+     */
     private findHolesAndBoundaries(): void {
         if (!this.mask) {
             return
@@ -72,6 +96,12 @@ export class HoleFiller {
         }
     }
 
+    /**
+     * Identifies the boundary pixels adjacent to a given hole pixel.
+     *
+     * @private
+     * @param {Pixel} hole - The hole pixel to check for boundaries.
+     */
     private findBoundaries(hole: Pixel): void {
         if (!this.mask || !this.image) {
             return
@@ -99,6 +129,11 @@ export class HoleFiller {
         }
     }
 
+    /**
+     * Sets the color of the pixels in the holes based on boundary weights.
+     *
+     * @private
+     */
     private setHoleColor(): void {
         if (!this.image) {
             return
@@ -110,6 +145,13 @@ export class HoleFiller {
         }
     }
 
+    /**
+     * Calculates the color for a given hole pixel based on surrounding boundary pixels.
+     *
+     * @private
+     * @param {Pixel} hole - The hole pixel for which the color is being calculated.
+     * @returns {number} The calculated color value.
+     */
     private calculateHoleColor(hole: Pixel): number {
         let numerator = 0.0;
         let denominator = 0.0;
