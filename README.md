@@ -27,6 +27,13 @@ where
 
 ## Running locally
 
+### Installation
+
+```sh
+cd hole-filling-s
+npm shell
+```
+
 ### Requirements
  - [NodeJs - v22.11.0](https://nodejs.org/en)
  - [npm - v10.9.0](https://www.npmjs.com/)
@@ -38,9 +45,24 @@ where
 ### Example
 
 ```sh
-cd hole-filling-ts
 node build\index.js -i .\resources\Lenna.png -m .\resources\Mask.png -z 3 -e 0.01 -c 8
 ```
 ![Source](resources/Lenna.png)
 ![Mask](resources/Mask.png)
 ![Result](resources/filledImage_1731809791489.png)
+
+## Running in docker
+
+```sh
+cd hole-filling-ts
+docker build -t tsholefilling .
+docker run --rm -it -v HOST/PATH:/app/resources:rw tsholefilling
+```
+
+In the bash shell.. 
+
+```bash
+root@c4df36a09865:/app# ls
+cli.js  holeFiller.js  index.js  node_modules  package-lock.json  package.json  pixel.js  resources  sharpUtils.js  weighting.js
+root@992224d7c830:/app# node index.js -i ./resources/Lenna.png -m ./resources/Mask.png -z 3 -e 0.01 -c 8
+```
